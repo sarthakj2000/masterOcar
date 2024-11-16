@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      .track {
+        width: 600px;
+        height: 400px;
+        border: 20px solid #333;
+        position: relative;
+        margin: 50px auto;
+        background: #85af4b;
+      }
+
+      .inner-track {
+        width: 400px;
+        height: 200px;
+        border: 20px solid #333;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: #85af4b;
+      }
+
+      .car {
+        width: 40px;
+        height: 20px;
+        background: red;
+        position: absolute;
+        top: -10px;
+        left: 50px;
+        animation: drive 8s linear infinite;
+        transform-origin: center;
+        border-radius: 5px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        z-index: 2;
+      }
+
+      @keyframes drive {
+        0% {
+          top: 40px;
+          left: 50px;
+          transform: rotate(0deg);
+        }
+
+        20% {
+          top: 40px;
+          left: 530px;
+          transform: rotate(0deg);
+        }
+
+        25% {
+          top: 40px;
+          left: 550px;
+          transform: rotate(90deg);
+        }
+
+        45% {
+          top: 350px;
+          left: 550px;
+          transform: rotate(90deg);
+        }
+
+        50% {
+          top: 350px;
+          left: 530px;
+          transform: rotate(180deg);
+        }
+
+        70% {
+          top: 350px;
+          left: 50px;
+          transform: rotate(180deg);
+        }
+
+        75% {
+          top: 350px;
+          left: 30px;
+          transform: rotate(270deg);
+        }
+
+        95% {
+          top: 40px;
+          left: 30px;
+          transform: rotate(270deg);
+        }
+
+        100% {
+          top: 40px;
+          left: 50px;
+          transform: rotate(360deg);
+        }
+      }
+
+      .car::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 40px;
+        width: 10px;
+        height: 20px;
+        background: darkred;
+      }
+
+      .start-line {
+        position: absolute;
+        top: 0;
+        left: 50px;
+        width: 10px;
+        height: 20px;
+        background: white;
+        border-bottom: 2px solid black;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="track">
+      <div class="inner-track"></div>
+      <div class="car"></div>
+    </div>
+  </body>
+</html>

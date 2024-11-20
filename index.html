@@ -10,10 +10,9 @@
         margin: 50px auto;
         background: #85af4b;
       }
-
       .inner-track {
-        width: 400px;
-        height: 200px;
+        width: 300px;
+        height: 150px;
         border: 20px solid #333;
         position: absolute;
         top: 50%;
@@ -21,77 +20,19 @@
         transform: translate(-50%, -50%);
         background: #85af4b;
       }
-
       .car {
         width: 40px;
         height: 20px;
         background: red;
         position: absolute;
-        top: -10px;
+        top: 40px;
         left: 50px;
-        animation: drive 8s linear infinite;
         transform-origin: center;
         border-radius: 5px;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
         z-index: 2;
+        transition: transform 0.1s linear;
       }
-
-      @keyframes drive {
-        0% {
-          top: 40px;
-          left: 50px;
-          transform: rotate(0deg);
-        }
-
-        20% {
-          top: 40px;
-          left: 530px;
-          transform: rotate(0deg);
-        }
-
-        25% {
-          top: 40px;
-          left: 550px;
-          transform: rotate(90deg);
-        }
-
-        45% {
-          top: 350px;
-          left: 550px;
-          transform: rotate(90deg);
-        }
-
-        50% {
-          top: 350px;
-          left: 530px;
-          transform: rotate(180deg);
-        }
-
-        70% {
-          top: 350px;
-          left: 50px;
-          transform: rotate(180deg);
-        }
-
-        75% {
-          top: 350px;
-          left: 30px;
-          transform: rotate(270deg);
-        }
-
-        95% {
-          top: 40px;
-          left: 30px;
-          transform: rotate(270deg);
-        }
-
-        100% {
-          top: 40px;
-          left: 50px;
-          transform: rotate(360deg);
-        }
-      }
-
       .car::before {
         content: "";
         position: absolute;
@@ -101,22 +42,115 @@
         height: 20px;
         background: darkred;
       }
-
-      .start-line {
-        position: absolute;
-        top: 0;
-        left: 50px;
-        width: 10px;
-        height: 20px;
-        background: white;
-        border-bottom: 2px solid black;
-      }
     </style>
   </head>
   <body>
     <div class="track">
       <div class="inner-track"></div>
-      <div class="car"></div>
+      <div class="car" id="car"></div>
     </div>
+    <script>
+      const car = document.getElementById("car");
+      const outerTrack = {
+        left: 20,
+        right: 620,
+        top: 20,
+        bottom: 420,
+      };
+      const innerTrack = {
+        left: 140,
+        right: 460,
+        top: 125,
+        bottom: 275,
+      };
+      const carWidth = 40;
+      const carHeight = 20;
+      let posX = 500;
+      let posY = 40;
+      let rotation = 90;
+      const moveSpeed = 1;
+      const rotationSpeed = 2;
+      const keys = {
+        ArrowUp: false,
+        ArrowDown: false,
+        ArrowLeft: false,
+        ArrowRight: false,
+      };
+
+      function isPointInsideTrack(x, y) {
+        const outsideOuterTrack =
+          x <= outerTrack.left ||
+          x >= outerTrack.right ||
+          y <= outerTrack.top ||
+          y >= outerTrack.bottom;
+
+        const insideInnerTrack =
+          x > innerTrack.left &&
+          x < innerTrack.right &&
+          y > innerTrack.top &&
+          y < innerTrack.bottom;
+
+        return !(outsideOuterTrack || insideInnerTrack);
+      }
+
+      function checkCarBoundaries(newX, newY) {
+        const corners = [
+          { x: newX, y: newY },
+          { x: newX + carWidth, y: newY },
+          { x: newX, y: newY + carHeight },
+          { x: newX + carWidth, y: newY + carHeight },
+        ];
+
+        return corners.every((corner) =>
+          isPointInsideTrack(corner.x, corner.y)
+        );
+      }
+
+      function updateCarMovement() {
+        const angleRad = (rotation * Math.PI) / 180;
+
+        if (keys.ArrowLeft) rotation -= rotationSpeed;
+        if (keys.ArrowRight) rotation += rotationSpeed;
+
+        rotation = (rotation + 360) % 360;
+
+        let moveDirection = 0;
+        if (keys.ArrowUp) moveDirection = 1;
+        if (keys.ArrowDown) moveDirection = -1;
+
+        const newPosX = posX + moveDirection * moveSpeed * Math.cos(angleRad);
+        const newPosY = posY + moveDirection * moveSpeed * Math.sin(angleRad);
+
+        if (checkCarBoundaries(newPosX, newPosY)) {
+          posX = newPosX;
+          posY = newPosY;
+
+          car.style.left = `${posX}px`;
+          car.style.top = `${posY}px`;
+          car.style.transform = `rotate(${rotation}deg)`;
+        }
+      }
+
+      function handleKeyDown(e) {
+        if (e.key in keys) {
+          keys[e.key] = true;
+        }
+      }
+
+      function handleKeyUp(e) {
+        if (e.key in keys) {
+          keys[e.key] = false;
+        }
+      }
+
+      function gameLoop() {
+        updateCarMovement();
+        requestAnimationFrame(gameLoop);
+      }
+
+      document.addEventListener("keydown", handleKeyDown);
+      document.addEventListener("keyup", handleKeyUp);
+      gameLoop();
+    </script>
   </body>
 </html>
